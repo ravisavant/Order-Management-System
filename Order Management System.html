@@ -1,49 +1,130 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Order Managment System</title>
+    <title>Order Management System</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        #loginDiv, #searchDiv, #detailsDiv { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
-        input[type=text], input[type=password], select { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; }
-        button { padding: 10px 20px; margin-top: 10px; }
-        #result { margin-top: 20px; font-weight: bold; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: #fff;
+            padding: 30px;
+            width: 350px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 5px #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        #detailsDiv p {
+            line-height: 1.6;
+        }
+
+        #loginMsg, #searchMsg {
+            text-align: center;
+            margin-top: 10px;
+            color: red;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div id="loginDiv">
+<div id="loginDiv" class="card">
     <h2>Login</h2>
     <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password">
     <button onclick="login()">Login</button>
-    <p id="loginMsg" style="color:red;"></p>
+    <p id="loginMsg"></p>
 </div>
 
-<div id="searchDiv" style="display:none;">
-    <h2>Search Your Order</h2>
-    <label for="searchType">Search Type:</label>
+<div id="searchDiv" class="card" style="display:none;">
+    <h2>Search Order</h2>
+
     <select id="searchType">
         <option value="orderId">Order ID</option>
         <option value="omsId">OMS ID</option>
     </select>
-    <input type="text" id="searchValue" placeholder="Enter Order ID or OMS ID">
+
+    <input type="text" id="searchValue" placeholder="Enter ID">
     <button onclick="searchOrder()">Search</button>
-    <p id="searchMsg" style="color:red;"></p>
+
+    <p id="searchMsg"></p>
 </div>
 
-<div id="detailsDiv" style="display:none;">
+<div id="detailsDiv" class="card" style="display:none;">
     <h2>Order Details</h2>
     <p id="orderDetails"></p>
     <button onclick="backToSearch()">Back</button>
 </div>
 
 <script>
-    // Dummy login credentials
     const USER = "testuser";
     const PASS = "1234";
 
-    // Sample orders data
     const orders = [
         {orderId:"1234", omsId:"10101", status:"Created", brand:"KTM", country:"India"},
         {orderId:"5356", omsId:"10102", status:"Created", brand:"Yamaha", country:"USA"},
@@ -60,39 +141,44 @@
     function login() {
         const user = document.getElementById("username").value;
         const pass = document.getElementById("password").value;
+
         if(user === USER && pass === PASS){
-            document.getElementById("loginDiv").style.display = "none";
-            document.getElementById("searchDiv").style.display = "block";
+            loginDiv.style.display = "none";
+            searchDiv.style.display = "block";
         } else {
-            document.getElementById("loginMsg").innerText = "Invalid username or password!";
+            loginMsg.innerText = "Invalid username or password!";
         }
     }
 
     function searchOrder() {
         const type = document.getElementById("searchType").value;
         const value = document.getElementById("searchValue").value.trim();
-        const order = orders.find(o => (type === "orderId" ? o.orderId : o.omsId) === value);
+
+        const order = orders.find(o =>
+            (type === "orderId" ? o.orderId : o.omsId) === value
+        );
 
         if(order){
-            document.getElementById("searchDiv").style.display = "none";
-            document.getElementById("detailsDiv").style.display = "block";
-            document.getElementById("orderDetails").innerHTML = `
+            searchDiv.style.display = "none";
+            detailsDiv.style.display = "block";
+
+            orderDetails.innerHTML = `
                 <strong>Order ID:</strong> ${order.orderId}<br>
                 <strong>OMS ID:</strong> ${order.omsId}<br>
                 <strong>Status:</strong> ${order.status}<br>
                 <strong>Brand:</strong> ${order.brand}<br>
-                <strong>Country:</strong> ${order.country}<br>
+                <strong>Country:</strong> ${order.country}
             `;
         } else {
-            document.getElementById("searchMsg").innerText = "Order not integrated ❌";
+            searchMsg.innerText = "Order not integrated ❌";
         }
     }
 
     function backToSearch() {
-        document.getElementById("detailsDiv").style.display = "none";
-        document.getElementById("searchDiv").style.display = "block";
-        document.getElementById("searchValue").value = "";
-        document.getElementById("searchMsg").innerText = "";
+        detailsDiv.style.display = "none";
+        searchDiv.style.display = "block";
+        searchValue.value = "";
+        searchMsg.innerText = "";
     }
 </script>
 
